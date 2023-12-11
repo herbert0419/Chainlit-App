@@ -6,6 +6,7 @@ from langchain.agents import initialize_agent, Tool, AgentExecutor
 import os
 import chainlit as cl
 
+
 os.environ["OPENAI_API_KEY"] = "OPENAI_API_KEY"
 os.environ["SERPAPI_API_KEY"] = "SERPAPI_API_KEY"
 
@@ -29,15 +30,7 @@ def start():
             description="useful for when you need to answer questions about math",
         ),
     ]
-    agent = initialize_agent(
-        tools, llm1, agent="chat-zero-shot-react-description", verbose=True
+    return initialize_agent(
+        tools,llm1,agent = "chat-zero-shot-react-description",verbose=True
     )
-    cl.user_session.set("agent", agent)
 
-
-@cl.on_message
-async def main(message: cl.Message):
-    agent = cl.user_session.get("agent")  # type: AgentExecutor
-    cb = cl.LangchainCallbackHandler(stream_final_answer=True)
-
-    await cl.make_async(agent.run)(message.content, callbacks=[cb])
